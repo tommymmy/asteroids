@@ -1,7 +1,7 @@
 import pygame
 from circleshape import CircleShape
 from constants import *
-
+from logger import log_event
 import random
 
 class Asteroid(CircleShape):
@@ -20,14 +20,24 @@ class Asteroid(CircleShape):
         pygame.draw.circle(screen, "white", self.position, self.radius, LINE_WIDTH)
 
     def split(self):
+        self.kill()
         if self.radius <= ASTEROID_MIN_RADIUS:
-            self.kill()
-
-            #return
+            pass
         else:
-            angle = random.uniform(20, 50)
+            log_event("asteroid_split")
+            random_angle = random.uniform(20, 50)
+            ast1_vector = self.velocity.rotate(random_angle)
+            ast2_vector = self.velocity.rotate(-random_angle)
+
+            new_radius = self.radius - ASTEROID_MIN_RADIUS
+            asteroid1 = Asteroid(self.position[0], self.position[1], new_radius)
+            asteroid1.velocity = ast1_vector * 1.2
+            asteroid2 = Asteroid(self.position[0], self.position[1], new_radius)
+            asteroid2.velocity = ast2_vector * 1.2
+
+
             #below currently doesnt spawn - cannot important asteroidfield due to error
-            asteroid = Asteroid(self.x, self.y, (self.radius / 2))
+            #pygame.draw.circle(screen, "white", self.position, (self.radius / 2), LINE_WIDTH)
 
 
                # def spawn(self, radius, position, velocity):
